@@ -140,7 +140,9 @@ classdef FluxBalanceModel
                 metsConsumed = find(flux<0);
                 metsProduced = find(flux>0);
                 for j = 1:length(metsConsumed)                    
-                    for k = 1:length(metsProduced)                        
+                    for k = 1:length(metsProduced)
+
+                        
                         % add flux from this reaction
                         f = flux(metsProduced(k))/netFlux;
                         fluxNet(metsProduced(k), metsConsumed(j)) =...
@@ -149,26 +151,11 @@ classdef FluxBalanceModel
                     end                    
                 end
             end
-            nodeColors = cell(1, length(mets));
-            biomass = tsd.findMetabolite('biomass');
-            glucose = tsd.findMetabolite('glucose');
-            glycerol = tsd.findMetabolite('glycerol');
-            for i = 1:length(mets)
-                nodeColors{i} = 'w';
-                if ismember(mets(i), biomass)
-                    nodeColors{i} = 'r';
-                end
-                if ismember(mets(i), glucose)
-                    nodeColors{i} = 'g';
-                end
-                if ismember(mets(i), glycerol)
-                    nodeColors{i} = 'b';
-                end
-            end
+            nodeColors = cell(;
             edgeColors = {'g','b','r','c'}
             graphViz4Matlab('-adjMat',fluxNet,...
                 '-nodeLabels',tsd.model.metNames(mets),...
-                '-layout',Gvizlayout,...
+                '-layout',Treelayout,...
                 '-nodeColors',nodeColors,...
                 '-edgeColors', edgeColors);
         end
