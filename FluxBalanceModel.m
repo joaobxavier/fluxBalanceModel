@@ -13,9 +13,9 @@ classdef FluxBalanceModel
         % constructor: creates a new instance of FluxBalanceModel
         % from a previously loaded model file (e.g. pao.mat)
         function tsd = FluxBalanceModel(model)
-            % add directories to path
-            setenv('PATH', [getenv('PATH') ':/usr/local/bin']);
-            addpath(genpath('graphViz4Matlab'));
+            % add directories to path if working with graphviz
+            %             setenv('PATH', [getenv('PATH') ':/usr/local/bin']);
+            %             addpath(genpath('graphViz4Matlab'));
             workingDirectory = pwd;
             cd('/Library/gurobi550/mac64/matlab');
             gurobi_setup;
