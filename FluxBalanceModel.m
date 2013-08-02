@@ -119,7 +119,7 @@ classdef FluxBalanceModel
         
         
         % plot the results form the gurobi run
-        function fluxNet = plotFluxes(tsd)
+        function bg = plotFluxes(tsd)
             if isempty(tsd.results)
                 error('No results yet. Execture ''runGurobi'' first')
             end
@@ -139,40 +139,52 @@ classdef FluxBalanceModel
                 netFlux = sum(flux(flux>0));
                 metsConsumed = find(flux<0);
                 metsProduced = find(flux>0);
-                for j = 1:length(metsConsumed)                    
-                    for k = 1:length(metsProduced)                        
+                for j = 1:length(metsConsumed)
+                    for k = 1:length(metsProduced)
                         % add flux from this reaction
                         f = flux(metsProduced(k))/netFlux;
                         fluxNet(metsProduced(k), metsConsumed(j)) =...
                             fluxNet(metsProduced(k), metsConsumed(j)) -...
                             flux(metsConsumed(j)) * f;
-                    end                    
+                    end
                 end
             end
-            nodeColors = cell(1, length(mets));
-            biomass = tsd.findMetabolite('biomass');
-            glucose = tsd.findMetabolite('glucose');
-            glycerol = tsd.findMetabolite('glycerol');
-            for i = 1:length(mets)
-                nodeColors{i} = 'w';
-                if ismember(mets(i), biomass)
-                    nodeColors{i} = 'r';
-                end
-                if ismember(mets(i), glucose)
-                    nodeColors{i} = 'g';
-                end
-                if ismember(mets(i), glycerol)
-                    nodeColors{i} = 'b';
-                end
-            end
-            edgeColors = {'g','b','r','c'}
-            graphViz4Matlab('-adjMat',fluxNet,...
-                '-nodeLabels',tsd.model.metNames(mets),...
-                '-layout',Gvizlayout,...
-                '-nodeColors',nodeColors,...
-                '-edgeColors', edgeColors);
+            % graphViz code
+            %             nodeColors = cell(1, length(mets));
+            %             biomass = tsd.findMetabolite('biomass');
+            %             glucose = tsd.findMetabolite('glucose');
+            %             glycerol = tsd.findMetabolite('glycerol');
+            %             for i = 1:length(mets)
+            %                 nodeColors{i} = 'w';
+            %                 if ismember(mets(i), biomass)
+            %                     nodeColors{i} = 'r';
+            %                 end
+            %                 if ismember(mets(i), glucose)
+            %                     nodeColors{i} = 'g';
+            %                 end
+            %                 if ismember(mets(i), glycerol)
+            %                     nodeColors{i} = 'b';
+            %                 end
+            %             end
+            %             edgeColors = {'g','b','r','c'}
+            %             graphViz4Matlab('-adjMat',fluxNet,...
+            %                 '-nodeLabels',tsd.model.metNames(mets),...
+            %                 '-layout',Gvizlayout,...
+            %                 '-nodeColors',nodeColors,...
+            %                 '-edgeColors', edgeColors);
+            
+            %use this to draw with matlab code
+            bg = biograph(fluxNet, tsd.model.metNames(mets));
+            nodes = get(bg, 'Nodes');
+            % set the biomass to red
+            [~, i, ~] = intersect(mets, tsd.findMetabolite('biomass'));
+            set(nodes(i), 'Color', [1 0 0]);
+            % set the glucose to blue
+            [~, i, ~] = intersect(mets, tsd.findMetabolite('glucose'));
+            set(nodes(i), 'Color', [0 0 1]);
+            view(bg);
         end
-
+        
         
     end % END OF METHODS
     
