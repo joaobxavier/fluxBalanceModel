@@ -117,7 +117,7 @@ classdef FluxBalanceModel
             
         end
         
-        
+
         % plot the results form the gurobi run
         function bg = plotFluxes(tsd)
             if isempty(tsd.results)
